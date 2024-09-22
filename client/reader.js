@@ -161,7 +161,8 @@ rl.on('line', (line) => {
   // filter out most false hits
   // if too much junk data, make sure '-p' option isn't enabled in multimon
   if (address.length > 2 && message) {
-    var padAddress = padDigits(address,7);
+    var addressLength = sendFunctionCode ? 8 : 7;
+    var padAddress = padDigits(address,addressLength);
     console.log(colors.red(time+': ')+colors.yellow(padAddress+': ')+colors.success(trimMessage));
     // now send the message
     var form = {
