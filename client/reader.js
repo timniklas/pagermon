@@ -100,7 +100,7 @@ rl.on('line', (line) => {
             message = line.match(/Numeric:(.*?)$/)[1].trim();
             trimMessage = message.replace(/<[A-Za-z]{3}>/g, '').replace(/Ä/g, '[').replace(/Ü/g, ']');
         } else {
-            multialarm.push({address, datetime});
+            multialarm.push({address, time, datetime});
             message = false;
             trimMessage = '';
         }
@@ -167,28 +167,29 @@ rl.on('line', (line) => {
     if(multialarm.length > 0) {
         multialarm.forEach((element) => {
             var padAddress = padDigits(element.address,addressLength);
-            console.log(colors.red(time+': ')+colors.yellow(padAddress+': ')+colors.success(trimMessage));
+            console.log(colors.red(element.time+': ')+colors.yellow(padAddress+': ')+colors.success(trimMessage));
             // now send the message
             var form = {
               address: padAddress,
-              message: trimMessage  == "" ? "null" : trimMessage,
+              message: trimMessage,
               datetime: element.datetime,
               source: identifier
             };
             sendPage(form, 0);
         });
         multialarm = [];
+    } else {
+        var padAddress = padDigits(address,addressLength);
+        console.log(colors.red(time+': ')+colors.yellow(padAddress+': ')+colors.success(trimMessage));
+        // now send the message
+        var form = {
+          address: padAddress,
+          message: trimMessage,
+          datetime: datetime,
+          source: identifier
+        };
+        sendPage(form, 0);
     }
-    var padAddress = padDigits(address,addressLength);
-    console.log(colors.red(time+': ')+colors.yellow(padAddress+': ')+colors.success(trimMessage));
-    // now send the message
-    var form = {
-      address: padAddress,
-      message: trimMessage  == "" ? "null" : trimMessage,
-      datetime: datetime,
-      source: identifier
-    };
-    sendPage(form, 0);
   } else {
     console.log(colors.red(time+': ')+colors.grey(line));
   }
