@@ -167,7 +167,7 @@ rl.on('line', (line) => {
     // now send the message
     var form = {
       address: padAddress,
-      message: trimMessage,
+      message: trimMessage  == "" ? "null" : trimMessage,
       datetime: datetime,
       source: identifier
     };
