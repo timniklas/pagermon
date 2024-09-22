@@ -1,0 +1,9 @@
+{
+    "name": "PrivacyReplace",
+    "description": "Option to allow hashing incoming messages (privacy)",
+    "disable": false,
+    "trigger": "message",
+    "scope": "before",
+    "config": [],
+    "aliasConfig": []
+}
