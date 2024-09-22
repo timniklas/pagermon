@@ -61,6 +61,7 @@ const rl = readline.createInterface({
 });
 
 var frag = {};
+var multialarm = [];
 var SAME = require('jsame'); //Import jSAME EAS decode 
 rl.on('line', (line) => {
     //console.log(`Received: ${line.trim()}`);
@@ -99,6 +100,7 @@ rl.on('line', (line) => {
             message = line.match(/Numeric:(.*?)$/)[1].trim();
             trimMessage = message.replace(/<[A-Za-z]{3}>/g, '').replace(/Ä/g, '[').replace(/Ü/g, ']');
         } else {
+            multialarm.push({address, datetime});
             message = false;
             trimMessage = '';
         }
@@ -162,6 +164,21 @@ rl.on('line', (line) => {
   // if too much junk data, make sure '-p' option isn't enabled in multimon
   if (message) {
     var addressLength = sendFunctionCode ? 8 : 7;
+    if(multialarm.length > 0) {
+        multialarm.forEach((element) => {
+            var padAddress = padDigits(element.address,addressLength);
+            console.log(colors.red(time+': ')+colors.yellow(padAddress+': ')+colors.success(trimMessage));
+            // now send the message
+            var form = {
+              address: padAddress,
+              message: trimMessage  == "" ? "null" : trimMessage,
+              datetime: element.datetime,
+              source: identifier
+            };
+            sendPage(form, 0);
+        });
+        multialarm = [];
+    }
     var padAddress = padDigits(address,addressLength);
     console.log(colors.red(time+': ')+colors.yellow(padAddress+': ')+colors.success(trimMessage));
     // now send the message
